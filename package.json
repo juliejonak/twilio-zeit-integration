@@ -1,0 +1,6 @@
+{
+	"name": "zeit-test-integration",
+	"dependencies": {
+		"@zeit/integration-utils": "latest"
+	}
+}
