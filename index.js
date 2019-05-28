@@ -22,7 +22,7 @@ module.exports = withUiHook(async ({payload}) => {
             <Container>
                 <Input label="AID" name="AID" value=${store.AID} />
                 <Input label="AuthTok" name="AuthTok" value=${store.AuthTok} />
-                <Input label="Phone" name="Phone" type='password' value=${store.Phone} />
+                <Input label="Phone" name="Phone" value=${store.Phone} />
                 <Input label="Message" name="Message" value=${store.Message} />
             </Container>
 

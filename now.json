@@ -1,5 +1,5 @@
 {
     "name": "zeit-test-integration",
     "version": 2,
-    "builds": [{ "src": "test-form.js", "use": "@now/node" }]
+    "builds": [{ "src": "index.js", "use": "@now/node" }]
 }
