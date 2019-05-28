@@ -1,7 +1,7 @@
 const { withUiHook, htm } = require('@zeit/integration-utils')
 
 const store = {
-    AID: '',
+    AccountID: '',
     AuthTok: '',
     Phone: '',
     Message: ''
@@ -11,7 +11,7 @@ module.exports = withUiHook(async ({payload}) => {
     const {clientState, action} = payload;
 
     if (action === 'submit'){
-        store.AID = clientState.AID;
+        store.AccountID = clientState.AccountID;
         store.AuthTok = clientState.AuthTok;
         store.Phone = clientState.Phone;
         store.Message = clientState.Message;
@@ -20,7 +20,7 @@ module.exports = withUiHook(async ({payload}) => {
     return htm`
         <Page>
             <Container>
-                <Input label="AID" name="AID" value=${store.AID} />
+                <Input label="AccountID" name="AccountID" value=${store.AccountID} />
                 <Input label="AuthTok" name="AuthTok" value=${store.AuthTok} />
                 <Input label="Phone" name="Phone" value=${store.Phone} />
                 <Input label="Message" name="Message" value=${store.Message} />
