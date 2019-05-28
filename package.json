@@ -1,6 +1,7 @@
 {
 	"name": "zeit-test-integration",
 	"dependencies": {
-		"@zeit/integration-utils": "^0.5.1"
+        "@zeit/integration-utils": "^0.5.1",
+        "twilio": "^3.30.3"
 	}
 }
