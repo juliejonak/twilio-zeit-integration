@@ -2,8 +2,6 @@ const { withUiHook, htm } = require('@zeit/integration-utils')
 const twilio = require('twilio');
 
 const storeInfo = {
-    AccountID: '',
-    AuthTok: '',
     Phone: '',
     Message: '',
     MessageSent: false
@@ -11,23 +9,29 @@ const storeInfo = {
 
 messageContainer = `<Container><h3>Not yet sent</h3></Container>`
 
-module.exports = withUiHook(async ({payload}) => {
+module.exports = withUiHook(async ({payload, zeitClient}) => {
+    const twilioAuth = await zeitClient.getMetadata();
     const {clientState, action} = payload;
+    const client = new twilio(twilioAuth.AccountID, twilioAuth.AuthTok);
 
-    if (action === 'submit'){
-        storeInfo.AccountID = clientState.AccountID;
-        storeInfo.AuthTok = clientState.AuthTok;
+    if (action === 'set'){
+        twilioAuth.AccountID = clientState.AccountID;
+        twilioAuth.AuthTok = clientState.AuthTok;
+        await zeitClient.setMetadata(twilioAuth)
+
         storeInfo.Phone = clientState.Phone;
         storeInfo.Message = clientState.Message;
+        storeInfo.MessageSent = true;
+    }
 
-        const client = new twilio(storeInfo.AccountID, storeInfo.AuthTok);
-
+    if (action === 'send'){
         client.messages.create({
-            body: storeInfo.Message,
-            to: storeInfo.Phone,
+            body: `${storeInfo.Message}`,
+            to: `${storeInfo.Phone}`,
             from: '+19412567546'
           })
           .then((response) => {
+            console.log(response)
             storeInfo.MessageSent = true
           });
     }
@@ -39,21 +43,25 @@ module.exports = withUiHook(async ({payload}) => {
     return htm`
         <Page>
             <Container>
-                <Input label="AccountID" type='password' name="AccountID" value=${storeInfo.AccountID} />
-                <Input label="AuthTok" type='password'  name="AuthTok" value=${storeInfo.AuthTok} />
+                <Input label="AccountID" type='password' name="AccountID" value=${twilioAuth.AccountID || ''} />
+                <Input label="AuthTok" type='password'  name="AuthTok" value=${twilioAuth.AuthTok || ''} />
+            </Container>
+
+            <Container>
                 <Input label="Phone" name="Phone" value=${storeInfo.Phone} />
                 <Input label="Message" name="Message" value=${storeInfo.Message} />
             </Container>
 
             <Container>
-                <h4>Account ID: ${storeInfo.AccountID}</h4>
-                <h4>Auth: ${storeInfo.AuthTok}</h4>
-                <h4>Number: ${storeInfo.Phone}</h4>
-                <h4>Message: ${storeInfo.Message}</h4>
+                <P>Account ID: ${twilioAuth.AccountID}</P>
+                <P>Auth: ${twilioAuth.AuthTok}</P>
+                <P>Number: ${storeInfo.Phone}</P>
+                <P>Message: ${storeInfo.Message}</P>
             </Container>
 
             <Container>
-                <Button action="submit">Submit</Button>
+                <Button action="set">Set</Button>
+                <Button action="send">Send!</Button>
             </Container>
 
             ${messageContainer}
