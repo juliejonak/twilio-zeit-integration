@@ -3,12 +3,10 @@
     "version": 2,
     "builds": [
         { "src": "index.js", "use": "@now/node" },
-        { "src": "connect-with-twilio.js", "use": "@now/node" },
-        { "src": "twilio-callback.js", "use": "@now/node" }
+        { "src": "connect-with-twilio.js", "use": "@now/node" }
     ],
     "routes": [
-        { "src": "/connect-with-twilio", "dest": "/connect-with-twilio.js" },
-        { "src": "/twilio-callback", "dest": "/twilio-callback.js" }
+        { "src": "/connect-with-twilio", "dest": "/connect-with-twilio.js" }
     ],
     "env": {
         "TWILIO_AUTH_TOK": "c6677c725df1ddfa37f333d7ce4ab5b9",

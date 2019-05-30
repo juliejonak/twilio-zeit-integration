@@ -3,10 +3,11 @@ const twilio = require('twilio');
 
 const { TWILIO_AUTH_TOK } = process.env;
 
-function sendMessage(sid, auth){
+async function sendMessage(sid, auth){
     const client = new twilio(sid, auth);
-
+    console.log('client: ', client)
     try {
+        console.log('are we working at all?', sid, auth)
         client.messages.create({
             body: 'Sent from Zeit',
             to: '+18328595441',
@@ -24,13 +25,14 @@ module.exports = withUiHook(async ({payload, zeitClient}) => {
     const {clientState, action, query} = payload;
 
     if(payload.action === 'disconnect'){
-        delete metadata.twilioToken;
+        delete metadata.userTwilioSID;
+        delete metadata.twilioAuth;
         await zeitClient.setMetadata(metadata);
     }
 
     if(action === 'send-message'){
         console.log('metadata: ', metadata.userTwilioSID, metadata.twilioAuth)
-        sendMessage(metadata.userTwilioSID, metadata.twilioAuth);
+        await sendMessage(metadata.userTwilioSID, metadata.twilioAuth);
 
         return htm`
         <Page>
@@ -56,7 +58,7 @@ module.exports = withUiHook(async ({payload, zeitClient}) => {
     }
 
     if (metadata.userTwilioSID && metadata.twilioAuth) {
-        sendMessage(metadata.userTwilioSID, metadata.twilioAuth);
+        await sendMessage(metadata.userTwilioSID, metadata.twilioAuth);
     }
 
     // if res is error=unauthorized_client, Twilio declined access
