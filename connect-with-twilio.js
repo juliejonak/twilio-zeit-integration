@@ -26,6 +26,8 @@ module.exports = (req, res) => {
 
     // When successfully approved, Twilio returns the user back to the specified redirect URL with their account SID as a query param - we need to pull that out and add it to the metadata store on Zeit ( const Twilio_Acct_SID = req.query.AccountSid)
 
+    // https://zeit.co/oauth/authorize?AccountSid=SOMENUMBER
+
     // Make Twilio requests with the user's SID and my own Twilio Auth Token
 
 }

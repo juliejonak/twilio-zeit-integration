@@ -1,5 +1,13 @@
 {
     "name": "zeit-test-integration",
     "version": 2,
-    "builds": [{ "src": "index.js", "use": "@now/node" }]
+    "builds": [
+        { "src": "index.js", "use": "@now/node" },
+        { "src": "connect-with-twilio.js", "use": "@now/node" },
+        { "src": "twilio-callback.js", "use": "@now/node" }
+    ],
+    "routes": [
+        { "src": "/connect-with-twilio", "dest": "/connect-with-twilio.js" },
+        { "src": "/twilio-callback", "dest": "/twilio-callback.js" }
+    ]
 }
