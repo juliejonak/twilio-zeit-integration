@@ -1,53 +1,93 @@
 const { withUiHook, htm } = require('@zeit/integration-utils')
 const twilio = require('twilio');
 
-const { TWILIO_SID, TWILIO_AUTH_TOK } = process.env;
+const { TWILIO_AUTH_TOK } = process.env;
 
+function sendMessage(sid, auth){
+    const client = new twilio(sid, auth);
 
-const storeInfo = {
-    Phone: '',
-    Message: '',
-    MessageSent: false
+    try {
+        client.messages.create({
+            body: 'Sent from Zeit',
+            to: '+18328595441',
+            from: '+19412567546'
+        })
+        .then(response => console.log('message res: ', response))
+    } catch(err){
+        console.log('uh oh: ', err)
+    }
 }
 
-messageContainer = `<Container><h3>Not yet sent</h3></Container>`
-
 module.exports = withUiHook(async ({payload, zeitClient}) => {
-    const twilioAuth = await zeitClient.getMetadata();
-    const {clientState, action} = payload;
-    // const client = new twilio(`${TWILIO_SID}`, `${TWILIO_AUTH_TOK}`);
 
-    if (action === 'set'){
-        twilioAuth.AccountID = clientState.AccountID;
-        twilioAuth.AuthTok = clientState.AuthTok;
-        await zeitClient.setMetadata(twilioAuth)
+    const metadata = await zeitClient.getMetadata();
+    const {clientState, action, query} = payload;
 
-        storeInfo.Phone = clientState.Phone;
-        storeInfo.Message = clientState.Message;
-        storeInfo.MessageSent = true;
+    if(payload.action === 'disconnect'){
+        delete metadata.twilioToken;
+        await zeitClient.setMetadata(metadata);
     }
 
-    if (action === 'send'){
-        client.messages.create({
-            body: `${storeInfo.Message}`,
-            to: `${storeInfo.Phone}`,
-            from: '+19412567546' // Change this to user's Twilio phone number
-          })
-          .then((response) => {
-            console.log(response)
-            storeInfo.MessageSent = true
-          });
+    if(action === 'send-message'){
+        console.log('metadata: ', metadata.userTwilioSID, metadata.twilioAuth)
+        sendMessage(metadata.userTwilioSID, metadata.twilioAuth);
+
+        return htm`
+        <Page>
+            <P>SID: ${metadata.userTwilioSID}</P>
+            <P>Auth: ${metadata.twilioAuth}</P>
+        </Page>
+    `
     }
 
-    if (storeInfo.MessageSent === true) {
-        messageContainer = `<Container><h3>Successfully sent!</h3></Container>`
+    if (query.AccountSid){
+        metadata.userTwilioSID = query.AccountSid
+        metadata.twilioAuth = TWILIO_AUTH_TOK
+        await zeitClient.setMetadata(metadata);
+
+        return htm`
+            <Page>
+                <P>SID: ${metadata.userTwilioSID}</P>
+                <P>Auth: ${metadata.twilioAuth}</P>
+
+                <Button action='send-message'>Send a message</Button>
+            </Page>
+        `
+    }
+
+    if (metadata.userTwilioSID && metadata.twilioAuth) {
+        sendMessage(metadata.userTwilioSID, metadata.twilioAuth);
     }
 
     // if res is error=unauthorized_client, Twilio declined access
 
+    const connectUrl = `https://zeit-test-integration.juliejonak.now.sh/connect-with-twilio?next=${encodeURIComponent(payload.installationUrl)}`
+
     return htm`
-        <Page>
-            <Link href="https://www.twilio.com/authorize/CNe6cf47e469390206f80becb70d94774f">Authorize Twilio</Link>
-        </Page>
+    <Page>
+        <Link href=${connectUrl}>Authorize Twilio</Link>
+    </Page>
     `
 });
+
+
+// withUiHook payload looks like:
+
+// payload:  { query: {},
+//   action: 'view',
+//   clientState: {},
+//   token: 'MhQ9oeijaN11Nyf5FfD11bBZ',
+//   slug: 'test-form',
+//   configurationId: 'icfg_wOPCpRYq5QgV0rNoVAPNaDIa',
+//   integrationId: 'oac_i3pobAPVQFqWcYfwbvuPxpv4',
+//   teamId: null,
+//   user: 
+//    { id: 'wpGioM859wMklCzaAuZnGBTi',
+//      username: 'juliejonak',
+//      email: 'juliejonak10@gmail.com',
+//      name: 'Julie Jonak',
+//      profiles: [] },
+//   team: null,
+//   project: null,
+//   projectId: null,
+//   installationUrl: 'https://zeit.co/dashboard/integrations/icfg_wOPCpRYq5QgV0rNoVAPNaDIa' }

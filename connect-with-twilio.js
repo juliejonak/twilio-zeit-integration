@@ -30,4 +30,8 @@ module.exports = (req, res) => {
 
     // Make Twilio requests with the user's SID and my own Twilio Auth Token
 
+    // Had to set the Twilio Connect app authorize URL to the installation url on the zeit withUiHook payload for it to redirect back properly:
+
+    // installationUrl: 'https://zeit.co/dashboard/integrations/icfg_wOPCpRYq5QgV0rNoVAPNaDIa' 
+
 }
