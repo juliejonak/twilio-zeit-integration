@@ -10,35 +10,33 @@ const InfoView = require("./views/Info");
 const MessageView = require("./views/Message");
 const AuthorizeView = require("./views/Authorize");
 
-module.exports = withUiHook(
-  async ({ payload: { action, query }, zeitClient }) => {
-    const metadata = await zeitClient.getMetadata();
-
-    switch (action) {
-      case "disconnect":
-        await disconnect(zeitClient, metadata);
-        break;
-      case "send-message":
-        htmResp = await sendMsg(metadata.userTwilioSID, metadata.twilioAuth);
-        return InfoView(metadata);
-    }
-
-    if (query.AccountSid) {
-      metadata.userTwilioSID = query.AccountSid;
-      metadata.twilioAuth = TWILIO_AUTH_TOK;
-      await zeitClient.setMetadata(metadata);
-
-      return MessageView(metadata);
-    }
-
-    if (metadata.userTwilioSID && metadata.twilioAuth) {
+module.exports = withUiHook(async ({ payload, zeitClient }) => {
+  const metadata = await zeitClient.getMetadata();
+  const { action, query } = payload;
+  switch (action) {
+    case "disconnect":
+      await disconnect(zeitClient, metadata);
+      break;
+    case "send-message":
       await sendMsg(metadata.userTwilioSID, metadata.twilioAuth);
-    }
-
-    // if res is error=unauthorized_client, Twilio declined access
-    return AuthorizeView(payload);
+      return InfoView(metadata);
   }
-);
+
+  if (query.AccountSid) {
+    metadata.userTwilioSID = query.AccountSid;
+    metadata.twilioAuth = TWILIO_AUTH_TOK;
+    await zeitClient.setMetadata(metadata);
+
+    return MessageView(metadata);
+  }
+
+  if (metadata.userTwilioSID && metadata.twilioAuth) {
+    await sendMsg(metadata.userTwilioSID, metadata.twilioAuth);
+  }
+
+  // if res is error=unauthorized_client, Twilio declined access
+  return AuthorizeView(payload);
+});
 
 // withUiHook payload looks like:
 
