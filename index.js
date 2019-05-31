@@ -1,6 +1,9 @@
 const { withUiHook, htm } = require('@zeit/integration-utils')
 const twilio = require('twilio');
 
+// Logs for index.js are found in the terminal
+// Logs for all other files found at: https://zeit.co/deployments/zeit-test-integration.juliejonak.now.sh/logs
+
 const { TWILIO_AUTH_TOK } = process.env;
 
 async function sendMessage(sid, auth){
