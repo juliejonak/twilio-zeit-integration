@@ -7,6 +7,7 @@ const { TWILIO_AUTH_TOK } = process.env;
 module.exports = withUiHook(async ({ payload, zeitClient }) => {
   const metadata = await zeitClient.getMetadata();
   const { clientState, action, query } = payload;
+  console.log(payload);
 
   if (action === "disconnect") {
     delete metadata.userTwilioSID;
