@@ -1,1 +1,9 @@
-//To be used for cleaner importing and exporting
+const InfoView = require("./Info");
+const MessageView = require("./Message");
+const AuthorizeView = require("./Authorize");
+
+module.exports = {
+  InfoView,
+  MessageView,
+  AuthorizeView
+};

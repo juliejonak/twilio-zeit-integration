@@ -2,13 +2,10 @@ const { withUiHook } = require("@zeit/integration-utils");
 const { TWILIO_AUTH_TOK } = process.env;
 
 //Actions
-const disconnect = require("./lib/disconnect");
-const sendMsg = require("./lib/send-message");
+const { disconnect, sendMsg } = require("./lib");
 
 //Views
-const InfoView = require("./views/Info");
-const MessageView = require("./views/Message");
-const AuthorizeView = require("./views/Authorize");
+const { InfoView, MessageView, AuthorizeView } = require("./views");
 
 module.exports = withUiHook(async ({ payload, zeitClient }) => {
   const metadata = await zeitClient.getMetadata();
