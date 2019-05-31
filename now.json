@@ -1,15 +1,18 @@
 {
-    "name": "zeit-test-integration",
-    "version": 2,
-    "builds": [
-        { "src": "index.js", "use": "@now/node" },
-        { "src": "connect-with-twilio.js", "use": "@now/node" }
-    ],
-    "routes": [
-        { "src": "/connect-with-twilio", "dest": "/connect-with-twilio.js" }
-    ],
-    "env": {
-        "TWILIO_AUTH_TOK": "c6677c725df1ddfa37f333d7ce4ab5b9",
-        "TWILIO_APP_SID": "CNe6cf47e469390206f80becb70d94774f"
+  "name": "zeit-test-integration",
+  "version": 2,
+  "builds": [
+    { "src": "index.js", "use": "@now/node" },
+    { "src": "utils/connect-with-twilio.js", "use": "@now/node" }
+  ],
+  "routes": [
+    {
+      "src": "/connect-with-twilio",
+      "dest": "utils/connect-with-twilio.js"
     }
+  ],
+  "env": {
+    "TWILIO_AUTH_TOK": "c6677c725df1ddfa37f333d7ce4ab5b9",
+    "TWILIO_APP_SID": "CNe6cf47e469390206f80becb70d94774f"
+  }
 }
