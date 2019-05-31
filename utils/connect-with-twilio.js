@@ -3,9 +3,6 @@ const cookie = require('cookie');
 
 const { TWILIO_APP_SID } = process.env;
 
-// Possible other redirect url: `https://www.twilio.com/authorize?client_id=${TWILIO_APP_SID}&state=${state}`
-
-
 module.exports = (req, res) => {
     const {query} = parseUrl(req.url, true);
     if (!query.next) {
