@@ -1,6 +1,6 @@
 const { htm } = require("@zeit/integration-utils");
 
-module.exports = () => {
+module.exports = payload => {
   const connectUrl = `https://zeit-test-integration.brandongardner2.now.sh/connect-with-twilio?next=${encodeURIComponent(
     payload.installationUrl
   )}`;

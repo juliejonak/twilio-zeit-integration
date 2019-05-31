@@ -1,4 +1,4 @@
-const { withUiHook, htm } = require("@zeit/integration-utils");
+const { withUiHook } = require("@zeit/integration-utils");
 const { TWILIO_AUTH_TOK } = process.env;
 
 //Actions
@@ -36,7 +36,7 @@ module.exports = withUiHook(
     }
 
     // if res is error=unauthorized_client, Twilio declined access
-    return AuthorizeView();
+    return AuthorizeView(payload);
   }
 );
 
