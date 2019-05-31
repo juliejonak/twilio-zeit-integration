@@ -1,63 +1,44 @@
 const { withUiHook, htm } = require("@zeit/integration-utils");
-
-const sendMsg = require("./utils/send-twilio-msg");
-
 const { TWILIO_AUTH_TOK } = process.env;
 
-module.exports = withUiHook(async ({ payload, zeitClient }) => {
-  const metadata = await zeitClient.getMetadata();
-  const { clientState, action, query } = payload;
-  console.log(payload);
+//Actions
+const disconnect = require("./lib/disconnect");
+const sendMsg = require("./lib/send-message");
 
-  if (action === "disconnect") {
-    delete metadata.userTwilioSID;
-    delete metadata.twilioAuth;
-    await zeitClient.setMetadata(metadata);
+//Views
+const InfoView = require("./views/Info");
+const MessageView = require("./views/Message");
+const AuthorizeView = require("./views/Authorize");
+
+module.exports = withUiHook(
+  async ({ payload: { action, query }, zeitClient }) => {
+    const metadata = await zeitClient.getMetadata();
+
+    switch (action) {
+      case "disconnect":
+        await disconnect(zeitClient, metadata);
+        break;
+      case "send-message":
+        htmResp = await sendMsg(metadata.userTwilioSID, metadata.twilioAuth);
+        return InfoView(metadata);
+    }
+
+    if (query.AccountSid) {
+      metadata.userTwilioSID = query.AccountSid;
+      metadata.twilioAuth = TWILIO_AUTH_TOK;
+      await zeitClient.setMetadata(metadata);
+
+      return MessageView(metadata);
+    }
+
+    if (metadata.userTwilioSID && metadata.twilioAuth) {
+      await sendMsg(metadata.userTwilioSID, metadata.twilioAuth);
+    }
+
+    // if res is error=unauthorized_client, Twilio declined access
+    return AuthorizeView();
   }
-
-  if (action === "send-message") {
-    console.log("metadata: ", metadata.userTwilioSID, metadata.twilioAuth);
-    response = await sendMsg(metadata.userTwilioSID, metadata.twilioAuth);
-
-    return htm`
-        <Page>
-            <P>SID: ${metadata.userTwilioSID}</P>
-            <P>Auth: ${metadata.twilioAuth}</P>
-        </Page>
-    `;
-  }
-
-  if (query.AccountSid) {
-    metadata.userTwilioSID = query.AccountSid;
-    metadata.twilioAuth = TWILIO_AUTH_TOK;
-    await zeitClient.setMetadata(metadata);
-
-    return htm`
-            <Page>
-                <P>SID: ${metadata.userTwilioSID}</P>
-                <P>Auth: ${metadata.twilioAuth}</P>
-
-                <Button action='send-message'>Send a message</Button>
-            </Page>
-        `;
-  }
-
-  if (metadata.userTwilioSID && metadata.twilioAuth) {
-    await sendMsg(metadata.userTwilioSID, metadata.twilioAuth);
-  }
-
-  // if res is error=unauthorized_client, Twilio declined access
-
-  const connectUrl = `https://zeit-test-integration.juliejonak.now.sh/connect-with-twilio?next=${encodeURIComponent(
-    payload.installationUrl
-  )}`;
-
-  return htm`
-    <Page>
-        <Link href=${connectUrl}>Authorize Twilio</Link>
-    </Page>
-    `;
-});
+);
 
 // withUiHook payload looks like:
 
@@ -79,3 +60,19 @@ module.exports = withUiHook(async ({ payload, zeitClient }) => {
 //   project: null,
 //   projectId: null,
 //   installationUrl: 'https://zeit.co/dashboard/integrations/icfg_wOPCpRYq5QgV0rNoVAPNaDIa' }
+
+//   if (action === "disconnect") {
+//     await disconnect(zeitClient, metadata);
+//   }
+
+//   if (action === "send-message") {
+//     console.log("metadata: ", metadata.userTwilioSID, metadata.twilioAuth);
+//     response = await sendMsg(metadata.userTwilioSID, metadata.twilioAuth);
+
+//     return htm`
+//         <Page>
+//             <P>SID: ${metadata.userTwilioSID}</P>
+//             <P>Auth: ${metadata.twilioAuth}</P>
+//         </Page>
+//     `;
+//   }
