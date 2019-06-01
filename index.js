@@ -1,40 +1,48 @@
 const { withUiHook } = require("@zeit/integration-utils");
-const { TWILIO_AUTH_TOK } = process.env;
 
 //Actions
-const { disconnect, sendMsg } = require("./lib");
+const { disconnect, sendMsg, returnWithNav } = require("./lib");
 
 //Views
-const { InfoView, MessageView, AuthorizeView } = require("./views");
+const { InfoView, MessageView, EditEnv } = require("./views");
 
 module.exports = withUiHook(async ({ payload, zeitClient }) => {
   const metadata = await zeitClient.getMetadata();
-  const { action, query } = payload;
+  const { action, clientState } = payload;
 
   try {
-    switch (action) {
-      case "disconnect":
-        await disconnect(zeitClient, metadata);
-        break;
-      case "send-message":
-        await sendMsg(metadata.userTwilioSID, metadata.twilioAuth);
-        return InfoView(metadata);
-    }
+    // switch (action) {
+    //   case "disconnect":
+    //     await disconnect(zeitClient, metadata);
+    //     break;
+    //   case "send-message":
+    //     await sendMsg(metadata.userTwilioSID, metadata.twilioAuth);
+    //     break;
+    //   case "set-envs":
+    //     metadata.userTwilioSID = clientState.userTwilioSID;
+    //     metadata.twilioAuth = clientState.twilioAuth;
+    //     await zeitClient.setMetadata(metadata);
+    //     break;
+    //   case "clear-envs":
+    //     clientState.userTwilioSID = "";
+    //     clientState.twilioAuth = "";
+    //     metadata.userTwilioSID = "";
+    //     metadata.twilioAuth = "";
+    //     await zeitClient.setMetadata(metadata);
+    //     break;
+    //   case "go-to-message-view":
+    //     return returnWithNav(MessageView)({ metadata });
+    //   case "go-to-env-view":
+    //     return EditEnv({ metadata });
+    //   case "go-to-calls-view":
+    //     break;
+    //   case "go-to-texts-view":
+    //     break;
+    //   default:
+    //     return EditEnv({ metadata });
+    // }
 
-    if (query.AccountSid) {
-      metadata.userTwilioSID = query.AccountSid;
-      metadata.twilioAuth = TWILIO_AUTH_TOK;
-      await zeitClient.setMetadata(metadata);
-
-      return MessageView(metadata);
-    }
-
-    if (metadata.userTwilioSID && metadata.twilioAuth) {
-      await sendMsg(metadata.userTwilioSID, metadata.twilioAuth);
-    }
-
-    // if res is error=unauthorized_client, Twilio declined access
-    return AuthorizeView(payload);
+    return EditEnv(metadata);
   } catch (error) {
     console.log(error);
   }
@@ -76,3 +84,10 @@ module.exports = withUiHook(async ({ payload, zeitClient }) => {
 //         </Page>
 //     `;
 //   }
+
+// "routes": [
+//     {
+//       "src": "/connect-with-twilio",
+//       "dest": "utils/connect-with-twilio.js"
+//     }
+//   ],
