@@ -18,6 +18,11 @@ module.exports = withUiHook(async ({ payload, zeitClient }) => {
       case "send-message":
         await sendMsg(metadata, clientState);
         return returnWithNav(MessageView)(metadata);
+      case "clear-message":
+        clientState.toNumber = "";
+        clientState.fromNumber = "";
+        clientState.textMessage = "";
+        return returnWithNav(MessageView)(metadata);
       case "set-envs":
         metadata.userTwilioSID = clientState.userTwilioSID;
         metadata.twilioAuth = clientState.twilioAuth;
