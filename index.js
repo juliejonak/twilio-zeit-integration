@@ -16,7 +16,7 @@ module.exports = withUiHook(async ({ payload, zeitClient }) => {
         await disconnect(zeitClient, metadata);
         break;
       case "send-message":
-        await sendMsg(metadata.userTwilioSID, metadata.twilioAuth);
+        await sendMsg(metadata, clientState);
         break;
       case "set-envs":
         metadata.userTwilioSID = clientState.userTwilioSID;
@@ -31,7 +31,7 @@ module.exports = withUiHook(async ({ payload, zeitClient }) => {
         await zeitClient.setMetadata(metadata);
         break;
       case "go-to-message-view":
-        return returnWithNav(MessageView)(metadata);
+        return returnWithNav(MessageView)(clientState);
       case "go-to-env-view":
         return returnWithNav(EditEnvView)(metadata);
       case "go-to-calls-view":
@@ -39,10 +39,12 @@ module.exports = withUiHook(async ({ payload, zeitClient }) => {
       case "go-to-texts-view":
         break;
       default:
-        return returnWithNav(EditEnvView)(metadata);
+        if (metadata.userTwilioSID && metadata.twilioAuth) {
+          return returnWithNav(MessageView)(metadata);
+        } else {
+          return returnWithNav(EditEnvView)(metadata);
+        }
     }
-
-    return returnWithNav(EditEnvView)(metadata);
   } catch (error) {
     console.log(error);
   }
