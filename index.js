@@ -31,18 +31,18 @@ module.exports = withUiHook(async ({ payload, zeitClient }) => {
         await zeitClient.setMetadata(metadata);
         break;
       case "go-to-message-view":
-        return returnWithNav(MessageView)({ metadata });
+        return returnWithNav(MessageView)(metadata);
       case "go-to-env-view":
-        return returnWithNav(EditEnvView)({ metadata });
+        return returnWithNav(EditEnvView)(metadata);
       case "go-to-calls-view":
         break;
       case "go-to-texts-view":
         break;
       default:
-        return returnWithNav(EditEnvView)({ metadata });
+        return returnWithNav(EditEnvView)(metadata);
     }
 
-    return returnWithNav(EditEnvView(metadata));
+    return returnWithNav(EditEnvView)(metadata);
   } catch (error) {
     console.log(error);
   }
