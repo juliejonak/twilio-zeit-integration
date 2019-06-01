@@ -1,0 +1,1 @@
+// Future use, for cleaner importing and exporting out of the /views folder to the rest of the codebase
