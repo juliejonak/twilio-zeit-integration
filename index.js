@@ -4,7 +4,7 @@ const { withUiHook, htm } = require("@zeit/integration-utils");
 const { disconnect, sendMsg, returnWithNav } = require("./lib");
 
 //Views
-const { InfoView, MessageView, EditEnvView, CallsView, TextsView } = require("./views");
+const { InfoView, MessageView, EditEnvView, CallsView, TextsView, Disconnected } = require("./views");
 
 module.exports = withUiHook(async ({ payload, zeitClient }) => {
   const metadata = await zeitClient.getMetadata();
@@ -14,16 +14,12 @@ module.exports = withUiHook(async ({ payload, zeitClient }) => {
     switch (action) {
       case "disconnect":
         await disconnect(zeitClient, metadata);
-        return htm`
-            <Container>
-                <P>You have disconnected Twilio</P>
-            <Container
-        `
-        // break;
+        return returnWithNav(Disconnected)(metadata)
+
       case "send-message":
         await sendMsg(metadata, clientState);
         return returnWithNav(MessageView)(metadata);
-        
+
       case "clear-message":
         clientState.toNumber = "";
         clientState.fromNumber = "";
