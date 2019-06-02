@@ -1,18 +1,14 @@
 const { withUiHook } = require("@zeit/integration-utils");
-const { TWILIO_AUTH_TOK } = process.env;
 
 //Actions
-const disconnect = require("./lib/disconnect");
-const sendMsg = require("./lib/send-message");
+const { disconnect, sendMsg, returnWithNav } = require("./lib");
 
 //Views
-const InfoView = require("./views/Info");
-const MessageView = require("./views/Message");
-const AuthorizeView = require("./views/Authorize");
+const { InfoView, MessageView, EditEnvView } = require("./views");
 
 module.exports = withUiHook(async ({ payload, zeitClient }) => {
   const metadata = await zeitClient.getMetadata();
-  const { action, query } = payload;
+  const { action, clientState } = payload;
 
   try {
     switch (action) {
@@ -20,24 +16,40 @@ module.exports = withUiHook(async ({ payload, zeitClient }) => {
         await disconnect(zeitClient, metadata);
         break;
       case "send-message":
-        await sendMsg(metadata.userTwilioSID, metadata.twilioAuth);
-        return InfoView(metadata);
+        await sendMsg(metadata, clientState);
+        return returnWithNav(MessageView)(metadata);
+      case "clear-message":
+        clientState.toNumber = "";
+        clientState.fromNumber = "";
+        clientState.textMessage = "";
+        return returnWithNav(MessageView)(metadata);
+      case "set-envs":
+        metadata.userTwilioSID = clientState.userTwilioSID;
+        metadata.twilioAuth = clientState.twilioAuth;
+        await zeitClient.setMetadata(metadata);
+        return returnWithNav(EditEnvView)(metadata);
+      case "clear-envs":
+        clientState.userTwilioSID = "";
+        clientState.twilioAuth = "";
+        metadata.userTwilioSID = "";
+        metadata.twilioAuth = "";
+        await zeitClient.setMetadata(metadata);
+        break;
+      case "go-to-message-view":
+        return returnWithNav(MessageView)(clientState);
+      case "go-to-env-view":
+        return returnWithNav(EditEnvView)(metadata);
+      case "go-to-calls-view":
+        break;
+      case "go-to-texts-view":
+        break;
+      default:
+        if (metadata.userTwilioSID && metadata.twilioAuth) {
+          return returnWithNav(MessageView)(metadata);
+        } else {
+          return returnWithNav(EditEnvView)(metadata);
+        }
     }
-
-    if (query.AccountSid) {
-      metadata.userTwilioSID = query.AccountSid;
-      metadata.twilioAuth = TWILIO_AUTH_TOK;
-      await zeitClient.setMetadata(metadata);
-
-      return MessageView(metadata);
-    }
-
-    if (metadata.userTwilioSID && metadata.twilioAuth) {
-      await sendMsg(metadata.userTwilioSID, metadata.twilioAuth);
-    }
-
-    // if res is error=unauthorized_client, Twilio declined access
-    return AuthorizeView(payload);
   } catch (error) {
     console.log(error);
   }
@@ -79,3 +91,10 @@ module.exports = withUiHook(async ({ payload, zeitClient }) => {
 //         </Page>
 //     `;
 //   }
+
+// "routes": [
+//     {
+//       "src": "/connect-with-twilio",
+//       "dest": "utils/connect-with-twilio.js"
+//     }
+//   ],
