@@ -50,8 +50,8 @@ module.exports = withUiHook(async ({ payload, zeitClient }) => {
         return returnWithNav(CallsView)(metadata)
 
       case "go-to-texts-view":
-        return await messageLogs(metadata)
-        // return returnWithNav(TextsView)(metadata)
+        const messageList = await messageLogs(metadata)
+        return returnWithNav(TextsView)(messageList)
 
       default:
         if (metadata.userTwilioSID && metadata.twilioAuth) {
@@ -65,8 +65,8 @@ module.exports = withUiHook(async ({ payload, zeitClient }) => {
   }
 });
 
-
 // withUiHook payload looks like:
+
 
 // payload:  { query: {},
 //   action: 'view',

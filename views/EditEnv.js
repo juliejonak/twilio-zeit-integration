@@ -2,7 +2,7 @@ module.exports = metadata => {
   if (metadata.userTwilioSID && metadata.twilioAuth) {
     return `
     <Box>
-      <P>Twilio Authentication Details saved!</P>
+      <Notice type="success">Twilio Authentication Details saved!</Notice>
     </Box>
     <Box>
         <Input label="Twilio-SID" type="password" name="userTwilioSID" value="${metadata.userTwilioSID ||
@@ -18,7 +18,7 @@ module.exports = metadata => {
   } else {
     return `
     <Box>
-      <P>Input your Twilio Account SID and Auth Token to be stored with Zeit:</P>
+      <Notice type='error'>Input your Twilio Account SID and Auth Token to be stored with Zeit:</Notice>
     </Box>
     <Box>
         <Input label="Twilio-SID" type="password" name="userTwilioSID" value="${metadata.userTwilioSID ||
