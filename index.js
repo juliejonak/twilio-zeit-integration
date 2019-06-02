@@ -1,7 +1,7 @@
 const { withUiHook, htm } = require("@zeit/integration-utils");
 
 //Actions
-const { disconnect, sendMsg, returnWithNav } = require("./lib");
+const { disconnect, sendMsg, returnWithNav, messageLogs } = require("./lib");
 
 //Views
 const { InfoView, MessageView, EditEnvView, CallsView, TextsView, Disconnected } = require("./views");
@@ -50,7 +50,8 @@ module.exports = withUiHook(async ({ payload, zeitClient }) => {
         return returnWithNav(CallsView)(metadata)
 
       case "go-to-texts-view":
-        return returnWithNav(TextsView)(metadata)
+        return await messageLogs(metadata)
+        // return returnWithNav(TextsView)(metadata)
 
       default:
         if (metadata.userTwilioSID && metadata.twilioAuth) {

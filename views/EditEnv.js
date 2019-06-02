@@ -18,7 +18,7 @@ module.exports = metadata => {
   } else {
     return `
     <Box>
-      <P>Input your Twilio account SID and Auth Token to be stored with Zeit:</P>
+      <P>Input your Twilio Account SID and Auth Token to be stored with Zeit:</P>
     </Box>
     <Box>
         <Input label="Twilio-SID" type="password" name="userTwilioSID" value="${metadata.userTwilioSID ||
