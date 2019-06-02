@@ -1,10 +1,10 @@
-const { withUiHook } = require("@zeit/integration-utils");
+const { withUiHook, htm } = require("@zeit/integration-utils");
 
 //Actions
 const { disconnect, sendMsg, returnWithNav } = require("./lib");
 
 //Views
-const { InfoView, MessageView, EditEnvView } = require("./views");
+const { InfoView, MessageView, EditEnvView, CallsView, TextsView } = require("./views");
 
 module.exports = withUiHook(async ({ payload, zeitClient }) => {
   const metadata = await zeitClient.getMetadata();
@@ -14,35 +14,48 @@ module.exports = withUiHook(async ({ payload, zeitClient }) => {
     switch (action) {
       case "disconnect":
         await disconnect(zeitClient, metadata);
-        break;
+        return htm`
+            <Container>
+                <P>You have disconnected Twilio</P>
+            <Container
+        `
+        // break;
       case "send-message":
         await sendMsg(metadata, clientState);
         return returnWithNav(MessageView)(metadata);
+        
       case "clear-message":
         clientState.toNumber = "";
         clientState.fromNumber = "";
         clientState.textMessage = "";
         return returnWithNav(MessageView)(metadata);
+
       case "set-envs":
         metadata.userTwilioSID = clientState.userTwilioSID;
         metadata.twilioAuth = clientState.twilioAuth;
         await zeitClient.setMetadata(metadata);
         return returnWithNav(EditEnvView)(metadata);
+
       case "clear-envs":
         clientState.userTwilioSID = "";
         clientState.twilioAuth = "";
         metadata.userTwilioSID = "";
         metadata.twilioAuth = "";
         await zeitClient.setMetadata(metadata);
-        break;
+        return returnWithNav(EditEnvView)(metadata)
+
       case "go-to-message-view":
         return returnWithNav(MessageView)(clientState);
+
       case "go-to-env-view":
         return returnWithNav(EditEnvView)(metadata);
+
       case "go-to-calls-view":
-        break;
+        return returnWithNav(CallsView)(metadata)
+
       case "go-to-texts-view":
-        break;
+        return returnWithNav(TextsView)(metadata)
+
       default:
         if (metadata.userTwilioSID && metadata.twilioAuth) {
           return returnWithNav(MessageView)(metadata);
@@ -54,6 +67,7 @@ module.exports = withUiHook(async ({ payload, zeitClient }) => {
     console.log(error);
   }
 });
+
 
 // withUiHook payload looks like:
 
