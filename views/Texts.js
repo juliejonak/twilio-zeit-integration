@@ -7,7 +7,6 @@ module.exports = messageList => {
     messageList.forEach(m => {
         contents = contents + `<Fieldset display="flex">
             <Box display="flex" marginTop="1em" marginBottom="1em">
-
                 <Box display="flex" alignItems="baseline" marginRight="4em" marginLeft="1em">
                     <Box marginRight="1em"><B>Sent to:</B></Box>
                     <Box><P>${m.sentTo}</P></Box>
@@ -20,7 +19,6 @@ module.exports = messageList => {
             </Box>
 
             <Box display="flex">
-
                 <Box display="flex" alignItems="baseline" marginRight="4em" marginLeft="1em">
                     <Box marginRight="1em"><B>Date:</B></Box>
                     <Box><P>${format(m.date, 'ddd MMMM D YYYY [at] H[:]mm A')}</P></Box>

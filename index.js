@@ -1,10 +1,10 @@
-const { withUiHook, htm } = require("@zeit/integration-utils");
+const { withUiHook } = require("@zeit/integration-utils");
 
 //Actions
 const { disconnect, sendMsg, returnWithNav, messageLogs, callLogs } = require("./lib");
 
 //Views
-const { InfoView, MessageView, EditEnvView, CallsView, TextsView, Disconnected } = require("./views");
+const { MessageView, EditEnvView, CallsView, TextsView, Disconnected } = require("./views");
 
 module.exports = withUiHook(async ({ payload, zeitClient }) => {
   const metadata = await zeitClient.getMetadata();
@@ -66,47 +66,3 @@ module.exports = withUiHook(async ({ payload, zeitClient }) => {
   }
 });
 
-// withUiHook payload looks like:
-
-
-// payload:  { query: {},
-//   action: 'view',
-//   clientState: {},
-//   token: 'MhQ9oeijaN11Nyf5FfD11bBZ',
-//   slug: 'test-form',
-//   configurationId: 'icfg_wOPCpRYq5QgV0rNoVAPNaDIa',
-//   integrationId: 'oac_i3pobAPVQFqWcYfwbvuPxpv4',
-//   teamId: null,
-//   user:
-//    { id: 'wpGioM859wMklCzaAuZnGBTi',
-//      username: 'juliejonak',
-//      email: 'juliejonak10@gmail.com',
-//      name: 'Julie Jonak',
-//      profiles: [] },
-//   team: null,
-//   project: null,
-//   projectId: null,
-//   installationUrl: 'https://zeit.co/dashboard/integrations/icfg_wOPCpRYq5QgV0rNoVAPNaDIa' }
-
-//   if (action === "disconnect") {
-//     await disconnect(zeitClient, metadata);
-//   }
-
-//   if (action === "send-message") {
-//     console.log("metadata: ", metadata.userTwilioSID, metadata.twilioAuth);
-//     response = await sendMsg(metadata.userTwilioSID, metadata.twilioAuth);
-
-//     return htm`
-//         <Page>
-//             <P>SID: ${metadata.userTwilioSID}</P>
-//             <P>Auth: ${metadata.twilioAuth}</P>
-//         </Page>
-//     `;
-//   }
-
-// "routes": [
-//     {
-//       "src": "/connect-with-twilio",
-//       "dest": "utils/connect-with-twilio.js"
-//     }
-//   ],
