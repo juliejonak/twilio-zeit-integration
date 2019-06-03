@@ -69,3 +69,20 @@ Some features we'd like to implement (or receive contributions for):
 - Implement pagination with Twilio (previously supported feature that
 appears to no longer exist)
 - Use OAuth to integrate fully with Twilio
+
+
+### What is the Twilio Connect directory?
+
+Our initial plan was to use Twilio Connect to give users access to 
+their accounts, more securely, however, it didn't work as planned.
+
+The end result though was a (nearly) finished Twilio Connect integration.
+While it doesn't fit the use case envisioned, it could easily be
+its own integration with one or two more features.
+
+For developers who want to integrate Twilio Connect's capabilities,
+this integration is easy to spin up and start working on.
+
+It also demonstrates our development work at the beginning of the Zeit
+hackathon -- despite the use case not fitting, we felt it was a good 
+example of what else can be done with Twilio.
