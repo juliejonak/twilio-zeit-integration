@@ -57,7 +57,7 @@ module.exports = withUiHook(async ({ payload, zeitClient }) => {
         metadata.userTwilioSID = "";
         metadata.twilioAuth = "";
         await zeitClient.setMetadata(metadata);
-        return returnWithNav(EditEnvView)(metadata);
+        return returnWithNav(EditEnvView)({metadata});
 
       case "go-to-message-view":
         return returnWithNav(MessageView)(clientState);
@@ -77,7 +77,7 @@ module.exports = withUiHook(async ({ payload, zeitClient }) => {
         if (metadata.userTwilioSID && metadata.twilioAuth) {
           return returnWithNav(MessageView)(metadata);
         } else {
-          return returnWithNav(EditEnvView)(metadata);
+          return returnWithNav(EditEnvView)({metadata});
         }
     }
   } catch (error) {
