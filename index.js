@@ -1,20 +1,33 @@
 const { withUiHook } = require("@zeit/integration-utils");
 
 //Actions
-const { disconnect, sendMsg, returnWithNav, messageLogs, callLogs } = require("./lib");
+const {
+  disconnect,
+  sendMsg,
+  returnWithNav,
+  messageLogs,
+  callLogs,
+  setProjEnvs
+} = require("./lib");
 
 //Views
-const { MessageView, EditEnvView, CallsView, TextsView, Disconnected } = require("./views");
+const {
+  MessageView,
+  EditEnvView,
+  CallsView,
+  TextsView,
+  Disconnected
+} = require("./views");
 
 module.exports = withUiHook(async ({ payload, zeitClient }) => {
   const metadata = await zeitClient.getMetadata();
-  const { action, clientState } = payload;
+  const { action, clientState, projectId } = payload;
 
   try {
     switch (action) {
       case "disconnect":
         await disconnect(zeitClient, metadata);
-        return returnWithNav(Disconnected)(metadata)
+        return returnWithNav(Disconnected)(metadata);
 
       case "send-message":
         await sendMsg(metadata, clientState);
@@ -30,7 +43,13 @@ module.exports = withUiHook(async ({ payload, zeitClient }) => {
         metadata.userTwilioSID = clientState.userTwilioSID;
         metadata.twilioAuth = clientState.twilioAuth;
         await zeitClient.setMetadata(metadata);
-        return returnWithNav(EditEnvView)(metadata);
+        return returnWithNav(EditEnvView)({ metadata, projectId });
+
+      case "set-project-envs":
+        if (projectId) {
+          await setProjEnvs(metadata, zeitClient, projectId);
+        }
+        return returnWithNav(EditEnvView)({ metadata, projectId });
 
       case "clear-envs":
         clientState.userTwilioSID = "";
@@ -38,21 +57,21 @@ module.exports = withUiHook(async ({ payload, zeitClient }) => {
         metadata.userTwilioSID = "";
         metadata.twilioAuth = "";
         await zeitClient.setMetadata(metadata);
-        return returnWithNav(EditEnvView)(metadata)
+        return returnWithNav(EditEnvView)(metadata);
 
       case "go-to-message-view":
         return returnWithNav(MessageView)(clientState);
 
       case "go-to-env-view":
-        return returnWithNav(EditEnvView)(metadata);
+        return returnWithNav(EditEnvView)({ metadata, projectId });
 
       case "go-to-calls-view":
-        const callList = await callLogs(metadata)
-        return returnWithNav(CallsView)(callList)
+        const callList = await callLogs(metadata);
+        return returnWithNav(CallsView)(callList);
 
       case "go-to-texts-view":
-        const messageList = await messageLogs(metadata)
-        return returnWithNav(TextsView)(messageList)
+        const messageList = await messageLogs(metadata);
+        return returnWithNav(TextsView)(messageList);
 
       default:
         if (metadata.userTwilioSID && metadata.twilioAuth) {
@@ -65,4 +84,3 @@ module.exports = withUiHook(async ({ payload, zeitClient }) => {
     console.log(error);
   }
 });
-

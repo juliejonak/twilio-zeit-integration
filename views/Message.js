@@ -7,8 +7,8 @@ module.exports = clientState => `
         <Input label="Message" name="textMessage" value="${clientState.textMessage ||
           ""}" />
     </Box>
-    <Box>
-        <Button action="send-message">Submit</Button>
-        <Button action="clear-message">Reset</Button>
+    <Box marginTop="25px">
+        <Button small action="send-message">Submit</Button>
+        <Button small action="clear-message">Reset</Button>
     </Box>
 `;
