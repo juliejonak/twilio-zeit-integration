@@ -50,16 +50,6 @@ date and time, if the call was `inbound` or `outbound`, and the success status.
 SMS logs share the `sent to` number, message, date, time and delivery
 status.
 
-
-### I'm getting strange errors with Twilio
-
-Double check that your SID and Auth Tok credentials are logging correctly from
-the ENV variables. If not, you may need to check the logs within your Twilio
-dashboard to ensure there are no issues on your account.
-
-If you're still experiencing problems, let us know!
-
-
 ### What's coming next?
 
 Some features we'd like to implement (or receive contributions for):
@@ -86,3 +76,11 @@ this integration is easy to spin up and start working on.
 It also demonstrates our development work at the beginning of the Zeit
 hackathon -- despite the use case not fitting, we felt it was a good 
 example of what else can be done with Twilio.
+
+##### Help! I'm getting strange errors with Twilio
+
+Double check that your SID and Auth Tok credentials are logging correctly from
+the ENV variables. If not, you may need to check the logs within your Twilio
+dashboard to ensure there are no issues on your account.
+
+If you're still experiencing problems, let us know!
