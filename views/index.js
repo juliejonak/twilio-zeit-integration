@@ -4,7 +4,7 @@ const EditEnvView = require("./EditEnv");
 const Nav = require("./Nav");
 const CallsView = require('./Calls');
 const TextsView = require('./Texts');
-const Disconnected = require('./Disconnected')
+const Disconnected = require('./Disconnected');
 
 module.exports = {
   InfoView,

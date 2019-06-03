@@ -1,7 +1,7 @@
 const { withUiHook, htm } = require("@zeit/integration-utils");
 
 //Actions
-const { disconnect, sendMsg, returnWithNav, messageLogs } = require("./lib");
+const { disconnect, sendMsg, returnWithNav, messageLogs, callLogs } = require("./lib");
 
 //Views
 const { InfoView, MessageView, EditEnvView, CallsView, TextsView, Disconnected } = require("./views");
@@ -47,7 +47,8 @@ module.exports = withUiHook(async ({ payload, zeitClient }) => {
         return returnWithNav(EditEnvView)(metadata);
 
       case "go-to-calls-view":
-        return returnWithNav(CallsView)(metadata)
+        const callList = await callLogs(metadata)
+        return returnWithNav(CallsView)(callList)
 
       case "go-to-texts-view":
         const messageList = await messageLogs(metadata)
