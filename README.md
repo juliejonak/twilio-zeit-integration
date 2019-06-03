@@ -1,5 +1,11 @@
 # Twilio Zeit Integration
 
+|   [**Brandon Gardner**](https://github.com/BrandonGardner2)  |    [**Julie Jonak**](https://github.com/juliejonak)    |
+|:----------------:|:----------------:|
+| [<img src="https://avatars2.githubusercontent.com/u/43099379?s=460&v=4" width="80">](https://github.com/BrandonGardner2) | [<img src="https://avatars0.githubusercontent.com/u/41002881?s=460&v=4" width="80">](https://github.com/juliejonak) |
+| [<img src="https://github.com/favicon.ico" width="15"> Github](https://github.com/BrandonGardner2)  | [<img src="https://github.com/favicon.ico" width="15"> Github](https://github.com/juliejonak)  | 
+| [ <img src="https://static.licdn.com/sc/h/al2o9zrvru7aqj8e1x2rzsrca" width="15"> LinkedIn](https://www.linkedin.com/in/brandon-gardner-/) | [ <img src="https://static.licdn.com/sc/h/al2o9zrvru7aqj8e1x2rzsrca" width="15"> LinkedIn](https://www.linkedin.com/in/juliejonak/) | 
+
 This integration connects a user's Twilio account to Zeit to:
 
 - Simplify adding their Twilio Account SID and Auth Token 
